@@ -11,14 +11,18 @@
 		37E5F5E5185187BA003433D9 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 37E5F5E3185187BA003433D9 /* InfoPlist.strings */; };
 		37E5F5E7185187BA003433D9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 37E5F5E6185187BA003433D9 /* main.m */; };
 		37E5F5EB185187BA003433D9 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 37E5F5E9185187BA003433D9 /* Credits.rtf */; };
-		37E5F5EE185187BA003433D9 /* HSPDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 37E5F5ED185187BA003433D9 /* HSPDocument.m */; };
-		37E5F5F1185187BA003433D9 /* HSPDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37E5F5EF185187BA003433D9 /* HSPDocument.xib */; };
-		37E5F5F4185187BA003433D9 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37E5F5F2185187BA003433D9 /* MainMenu.xib */; };
 		37E5F5F6185187BA003433D9 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 37E5F5F5185187BA003433D9 /* Images.xcassets */; };
 		37E5F5FD185187BA003433D9 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E5F5FC185187BA003433D9 /* XCTest.framework */; };
 		37E5F5FE185187BA003433D9 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E5F5DA185187BA003433D9 /* Cocoa.framework */; };
 		37E5F606185187BA003433D9 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 37E5F604185187BA003433D9 /* InfoPlist.strings */; };
 		37E5F608185187BA003433D9 /* HSPMacTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 37E5F607185187BA003433D9 /* HSPMacTests.m */; };
+		37E5F61318518808003433D9 /* HSPDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37E5F61118518808003433D9 /* HSPDocument.xib */; };
+		37E5F61418518808003433D9 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37E5F61218518808003433D9 /* MainMenu.xib */; };
+		37E5F61C1851881C003433D9 /* HSPDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 37E5F6161851881C003433D9 /* HSPDocument.m */; };
+		37E5F61D1851881C003433D9 /* HSPObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 37E5F6181851881C003433D9 /* HSPObject.m */; };
+		37E5F61E1851881C003433D9 /* HSPView.m in Sources */ = {isa = PBXBuildFile; fileRef = 37E5F61A1851881C003433D9 /* HSPView.m */; };
+		37E5F620185188D9003433D9 /* HSPMac.icns in Resources */ = {isa = PBXBuildFile; fileRef = 37E5F61F185188D9003433D9 /* HSPMac.icns */; };
+		37E5F6221851890A003433D9 /* ax.icns in Resources */ = {isa = PBXBuildFile; fileRef = 37E5F6211851890A003433D9 /* ax.icns */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,16 +46,23 @@
 		37E5F5E6185187BA003433D9 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		37E5F5E8185187BA003433D9 /* HSPMac-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "HSPMac-Prefix.pch"; sourceTree = "<group>"; };
 		37E5F5EA185187BA003433D9 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
-		37E5F5EC185187BA003433D9 /* HSPDocument.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HSPDocument.h; sourceTree = "<group>"; };
-		37E5F5ED185187BA003433D9 /* HSPDocument.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HSPDocument.m; sourceTree = "<group>"; };
-		37E5F5F0185187BA003433D9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/HSPDocument.xib; sourceTree = "<group>"; };
-		37E5F5F3185187BA003433D9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		37E5F5F5185187BA003433D9 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		37E5F5FB185187BA003433D9 /* HSPMacTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HSPMacTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		37E5F5FC185187BA003433D9 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		37E5F603185187BA003433D9 /* HSPMacTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "HSPMacTests-Info.plist"; sourceTree = "<group>"; };
 		37E5F605185187BA003433D9 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		37E5F607185187BA003433D9 /* HSPMacTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HSPMacTests.m; sourceTree = "<group>"; };
+		37E5F61118518808003433D9 /* HSPDocument.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HSPDocument.xib; sourceTree = "<group>"; };
+		37E5F61218518808003433D9 /* MainMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
+		37E5F6151851881C003433D9 /* HSPDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HSPDocument.h; sourceTree = "<group>"; };
+		37E5F6161851881C003433D9 /* HSPDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HSPDocument.m; sourceTree = "<group>"; };
+		37E5F6171851881C003433D9 /* HSPObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HSPObject.h; sourceTree = "<group>"; };
+		37E5F6181851881C003433D9 /* HSPObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HSPObject.m; sourceTree = "<group>"; };
+		37E5F6191851881C003433D9 /* HSPView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HSPView.h; sourceTree = "<group>"; };
+		37E5F61A1851881C003433D9 /* HSPView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HSPView.m; sourceTree = "<group>"; };
+		37E5F61B1851881C003433D9 /* openhsp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = openhsp.h; sourceTree = "<group>"; };
+		37E5F61F185188D9003433D9 /* HSPMac.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = HSPMac.icns; sourceTree = "<group>"; };
+		37E5F6211851890A003433D9 /* ax.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ax.icns; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,6 +89,8 @@
 		37E5F5CE185187BA003433D9 = {
 			isa = PBXGroup;
 			children = (
+				37E5F61F185188D9003433D9 /* HSPMac.icns */,
+				37E5F6211851890A003433D9 /* ax.icns */,
 				37E5F5E0185187BA003433D9 /* HSPMac */,
 				37E5F601185187BA003433D9 /* HSPMacTests */,
 				37E5F5D9185187BA003433D9 /* Frameworks */,
@@ -117,10 +130,15 @@
 		37E5F5E0185187BA003433D9 /* HSPMac */ = {
 			isa = PBXGroup;
 			children = (
-				37E5F5EC185187BA003433D9 /* HSPDocument.h */,
-				37E5F5ED185187BA003433D9 /* HSPDocument.m */,
-				37E5F5EF185187BA003433D9 /* HSPDocument.xib */,
-				37E5F5F2185187BA003433D9 /* MainMenu.xib */,
+				37E5F6151851881C003433D9 /* HSPDocument.h */,
+				37E5F6161851881C003433D9 /* HSPDocument.m */,
+				37E5F6171851881C003433D9 /* HSPObject.h */,
+				37E5F6181851881C003433D9 /* HSPObject.m */,
+				37E5F6191851881C003433D9 /* HSPView.h */,
+				37E5F61A1851881C003433D9 /* HSPView.m */,
+				37E5F61B1851881C003433D9 /* openhsp.h */,
+				37E5F61118518808003433D9 /* HSPDocument.xib */,
+				37E5F61218518808003433D9 /* MainMenu.xib */,
 				37E5F5F5185187BA003433D9 /* Images.xcassets */,
 				37E5F5E1185187BA003433D9 /* Supporting Files */,
 			);
@@ -234,11 +252,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				37E5F6221851890A003433D9 /* ax.icns in Resources */,
 				37E5F5E5185187BA003433D9 /* InfoPlist.strings in Resources */,
+				37E5F61418518808003433D9 /* MainMenu.xib in Resources */,
+				37E5F620185188D9003433D9 /* HSPMac.icns in Resources */,
 				37E5F5F6185187BA003433D9 /* Images.xcassets in Resources */,
-				37E5F5F1185187BA003433D9 /* HSPDocument.xib in Resources */,
+				37E5F61318518808003433D9 /* HSPDocument.xib in Resources */,
 				37E5F5EB185187BA003433D9 /* Credits.rtf in Resources */,
-				37E5F5F4185187BA003433D9 /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -257,7 +277,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				37E5F5EE185187BA003433D9 /* HSPDocument.m in Sources */,
+				37E5F61C1851881C003433D9 /* HSPDocument.m in Sources */,
+				37E5F61D1851881C003433D9 /* HSPObject.m in Sources */,
+				37E5F61E1851881C003433D9 /* HSPView.m in Sources */,
 				37E5F5E7185187BA003433D9 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -295,22 +317,6 @@
 				37E5F5EA185187BA003433D9 /* en */,
 			);
 			name = Credits.rtf;
-			sourceTree = "<group>";
-		};
-		37E5F5EF185187BA003433D9 /* HSPDocument.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				37E5F5F0185187BA003433D9 /* Base */,
-			);
-			name = HSPDocument.xib;
-			sourceTree = "<group>";
-		};
-		37E5F5F2185187BA003433D9 /* MainMenu.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				37E5F5F3185187BA003433D9 /* Base */,
-			);
-			name = MainMenu.xib;
 			sourceTree = "<group>";
 		};
 		37E5F604185187BA003433D9 /* InfoPlist.strings */ = {
@@ -395,12 +401,13 @@
 		37E5F60C185187BA003433D9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HSPMac/HSPMac-Prefix.pch";
 				INFOPLIST_FILE = "HSPMac/HSPMac-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx10.8;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -408,12 +415,13 @@
 		37E5F60D185187BA003433D9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HSPMac/HSPMac-Prefix.pch";
 				INFOPLIST_FILE = "HSPMac/HSPMac-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx10.8;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
