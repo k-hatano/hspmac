@@ -145,9 +145,9 @@ unsigned long charToLong(unsigned char* ch,int head){
                         }else if(content=='('||content==')'){
                             break;
                         }else if([stack count]>=2){
-//                            b=[[stack lastObject] retain];
+                            b=[stack lastObject];
                             [stack removeLastObject];
-//                            a=[[stack lastObject] retain];
+                            a=[stack lastObject];
                             [stack removeLastObject];
                             if([[a objectForKey:@"kind"] isEqualTo:@"STR"]||[[b objectForKey:@"kind"] isEqualTo:@"STR"]){
                                 switch(content){
@@ -356,6 +356,7 @@ unsigned long charToLong(unsigned char* ch,int head){
     
     cmd=[[sent objectAtIndex:0] intValue];
     if(type==0x1){
+        NSLog(@"[let]");
         [variables setObject:[NSDictionary dictionaryWithObjectsAndKeys:[sent objectAtIndex:1],@"value",@"NUM",@"kind",nil]
                       forKey:[NSString stringWithFormat:@"%ld",cmd]];
     }else if(type==0x9){ // extcmd

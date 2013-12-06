@@ -23,6 +23,7 @@
 		37E5F61E1851881C003433D9 /* HSPView.m in Sources */ = {isa = PBXBuildFile; fileRef = 37E5F61A1851881C003433D9 /* HSPView.m */; };
 		37E5F620185188D9003433D9 /* HSPMac.icns in Resources */ = {isa = PBXBuildFile; fileRef = 37E5F61F185188D9003433D9 /* HSPMac.icns */; };
 		37E5F6221851890A003433D9 /* ax.icns in Resources */ = {isa = PBXBuildFile; fileRef = 37E5F6211851890A003433D9 /* ax.icns */; };
+		37E5F62418518C50003433D9 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 37E5F62318518C50003433D9 /* Localizable.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +64,7 @@
 		37E5F61B1851881C003433D9 /* openhsp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = openhsp.h; sourceTree = "<group>"; };
 		37E5F61F185188D9003433D9 /* HSPMac.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = HSPMac.icns; sourceTree = "<group>"; };
 		37E5F6211851890A003433D9 /* ax.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ax.icns; sourceTree = "<group>"; };
+		37E5F62318518C50003433D9 /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +132,7 @@
 		37E5F5E0185187BA003433D9 /* HSPMac */ = {
 			isa = PBXGroup;
 			children = (
+				37E5F62318518C50003433D9 /* Localizable.strings */,
 				37E5F6151851881C003433D9 /* HSPDocument.h */,
 				37E5F6161851881C003433D9 /* HSPDocument.m */,
 				37E5F6171851881C003433D9 /* HSPObject.h */,
@@ -257,6 +260,7 @@
 				37E5F61418518808003433D9 /* MainMenu.xib in Resources */,
 				37E5F620185188D9003433D9 /* HSPMac.icns in Resources */,
 				37E5F5F6185187BA003433D9 /* Images.xcassets in Resources */,
+				37E5F62418518C50003433D9 /* Localizable.strings in Resources */,
 				37E5F61318518808003433D9 /* HSPDocument.xib in Resources */,
 				37E5F5EB185187BA003433D9 /* Credits.rtf in Resources */,
 			);
