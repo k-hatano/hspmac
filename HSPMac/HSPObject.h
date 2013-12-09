@@ -27,11 +27,13 @@
     NSMutableDictionary* variables;
     NSMutableArray* buttons;
     
+    NSMutableString* codeViewerText;
+    
     NSPoint point;
     
     HSPHED hed;
     unsigned char* code;
-    char* data;
+    unsigned char* data;
     long* label;
 }
 
@@ -50,5 +52,8 @@
 - (void)setViewPrepared:(NSView*)value;
 
 - (void)buttonPushed:(id)sender;
+- (void)buildCodeViewText;
+- (void)pushTextToCodeView:(NSTextView*)codeViewerView;
+
 
 @end

@@ -51,6 +51,7 @@ unsigned long charToLong(unsigned char* ch,int head){
         variables=[[NSMutableDictionary alloc] init];
         buttons=[[NSMutableArray alloc] init];
         point=NSMakePoint(0, 0);
+        codeViewerText=[[NSMutableString alloc] init];
         for(i=0;i<BUFMAX;i++){
             buffers[i]=nil;
         }
@@ -102,7 +103,7 @@ unsigned long charToLong(unsigned char* ch,int head){
                     
                 current.type=charToShort(code, code_position);
                 code_position+=2;
-                if((type&0x8000)!=0){
+                if((current.type&0x8000)!=0){
                     current.code=(int)charToLong(code, code_position);
                     NSLog(@"%4x : %04x %ld",code_position-2,current.type,current.code);
                     code_position+=4;
@@ -120,7 +121,7 @@ unsigned long charToLong(unsigned char* ch,int head){
                 if(orig<0) orig=current.type;
                 content=(int)current.code;
                 
-                if((ex2!=0||ex1!=0)&&[stack count]>0){
+                if((ex2||ex1)&&[stack count]>0){
                     for(NSDictionary* d in stack){
                         // point.x=[[sent objectAtIndex:1] intValue];
                        [sentence addObject:[d objectForKey:@"value"]];
@@ -128,7 +129,7 @@ unsigned long charToLong(unsigned char* ch,int head){
                     [stack removeAllObjects];
                 }
                 
-                if(ex1!=0&&[sentence count]>0){
+                if((ex1)&&([sentence count]>0)){
                     [self execute:orig sentence:sentence];
                     orig=current.type;
                     [stack removeAllObjects];
@@ -440,6 +441,8 @@ unsigned long charToLong(unsigned char* ch,int head){
     unsigned char* bytes;
     int i;
     
+    [codeViewerText appendString:@"ABC"];
+    
     if(code!=NULL){
         free(code);
         code=NULL;
@@ -495,7 +498,7 @@ unsigned long charToLong(unsigned char* ch,int head){
         free(data);
         data=NULL;
     }
-    data=(char*)malloc(sizeof(char)*hed.max_ds);
+    data=(unsigned char*)malloc(sizeof(char)*hed.max_ds);
     for(i=0;i<hed.max_ds;i++){
         data[i]=bytes[hed.pt_ds+i];
     }
@@ -536,11 +539,42 @@ unsigned long charToLong(unsigned char* ch,int head){
     for(dict in buttons){
         if([dict objectForKey:@"BUTTON"] == sender){
             int jumpto=(int)label[[[dict objectForKey:@"FLAG"] intValue]];
-            NSLog(@"%x",jumpto);
+            NSLog(@"jump to %x",jumpto);
             code_position=jumpto;
             return;
         }
     }
+}
+
+- (void)pushTextToCodeView:(NSTextView*)codeViewerView{
+    [self buildCodeViewText];
+    
+    [codeViewerView selectAll:self];
+    [codeViewerView insertText:codeViewerText];
+    [codeViewerView.textStorage setAttributedString:[[NSAttributedString alloc] initWithString:codeViewerText attributes:[NSDictionary dictionaryWithObjectsAndKeys:[NSFont fontWithName:@"Menlo" size:11.0f], NSFontAttributeName, nil]]];
+    [codeViewerView scrollPoint:NSMakePoint(0, 0)];
+}
+
+- (void)buildCodeViewText{
+    HSPCODE current;
+    int position=0;
+    
+    codeViewerText=[[NSMutableString alloc] init];
+    while(position<=code_length){
+        current.type=charToShort(code, position);
+        position+=2;
+        if((current.type&0x8000)!=0){
+            current.code=(int)charToLong(code, position);
+            [codeViewerText appendFormat:@"%4x : %04x %ld\n",position-2,current.type,current.code];
+            position+=4;
+        }else{
+            current.code=charToShort(code, position);
+            [codeViewerText appendFormat:@"%4x :%04x %04x\n",position-2,current.type,(int)current.code];
+            position+=2;
+        }
+        
+    }
+    
 }
 
 @end

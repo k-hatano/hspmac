@@ -44,7 +44,9 @@
 - (BOOL)readFromData:(NSData *)data ofType:(NSString *)typeName error:(NSError **)outError
 {
     BOOL res=[object loadFromData:data];
-    if(res) object.docPrepared=self;
+    if(res){
+        object.docPrepared=self;
+    }
     return res;
 }
 
@@ -59,6 +61,11 @@
 
 - (HSPObject*)object{
     return object;
+}
+
+- (IBAction)showCodeViewerPanel:(id)sender{
+    [object pushTextToCodeView:codeViewerView];
+    [codeViewerPanel orderFront:self];
 }
 
 @end

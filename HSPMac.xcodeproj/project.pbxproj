@@ -405,6 +405,7 @@
 		37E5F60C185187BA003433D9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HSPMac/HSPMac-Prefix.pch";
@@ -419,6 +420,7 @@
 		37E5F60D185187BA003433D9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "HSPMac/HSPMac-Prefix.pch";
@@ -489,6 +491,7 @@
 				37E5F60D185187BA003433D9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		37E5F60E185187BA003433D9 /* Build configuration list for PBXNativeTarget "HSPMacTests" */ = {
 			isa = XCConfigurationList;
@@ -497,6 +500,7 @@
 				37E5F610185187BA003433D9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

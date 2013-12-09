@@ -43,7 +43,7 @@ typedef struct HSPHED{
 } HSPHED;
 
 typedef struct HSPCODE{
-    short type;
-    long code;
+    unsigned short type;
+    unsigned long code;
 } HSPCODE;
 

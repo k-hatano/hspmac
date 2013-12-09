@@ -11,8 +11,13 @@
 
 @interface HSPDocument : NSDocument{
     IBOutlet id view;
+    IBOutlet NSPanel* codeViewerPanel;
+    IBOutlet NSTextView* codeViewerView;
+    
     HSPObject* object;
 }
+
+- (IBAction)showCodeViewerPanel:(id)sender;
 
 - (id)view;
 - (HSPObject*)object;

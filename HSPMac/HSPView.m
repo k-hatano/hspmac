@@ -30,7 +30,7 @@
     }
     
     NSImage* buffer=[document.object drawableBuffer];
-    [buffer dissolveToPoint:NSMakePoint(0, 0) fraction:1.0f];
+    [buffer drawAtPoint:NSMakePoint(0.0f, 0.0f) fromRect:NSMakeRect(0.0f, 0.0f, [buffer size].width, [buffer size].height) operation:NSCompositeSourceOver fraction:1.0f];
 }
 
 
