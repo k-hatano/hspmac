@@ -34,7 +34,7 @@
     HSPHED hed;
     unsigned char* code;
     unsigned char* data;
-    long* label;
+    unsigned long* label;
 }
 
 - (id)init;
