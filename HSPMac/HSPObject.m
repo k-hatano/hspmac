@@ -137,7 +137,7 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
                 }
                 
                 switch (type) {
-                    case 0: // MARK
+                    case 0: // type=MARK
                         if(content==0x3f){
                             //dic=[NSDictionary dictionaryWithObjectsAndKeys:@"",@"value",@"STR",@"kind",nil];
                             dic=[NSDictionary dictionaryWithObjectsAndKeys:@"[blank]",@"value",@"STR",@"kind",nil];
@@ -256,7 +256,7 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
                             @throw [NSString stringWithFormat:@"Stack Overflow during Operation [%x]",content];
                         }
                         break;
-                    case 1:
+                    case 1: // type=VAR
                         if(ex1>0){
                             str=[NSString stringWithFormat:@"%d",content];
                             dic=[NSDictionary dictionaryWithObjectsAndKeys:str,@"value",@"NUM",@"kind",nil];
@@ -266,7 +266,7 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
                             [stack addObject:dic];
                         }
                         break;
-                    case 2: // STRING
+                    case 2: // type=STRING
                         str=[NSString stringWithCString:&data[content]];
                         dic=[NSDictionary dictionaryWithObjectsAndKeys:str,@"value",@"STR",@"kind",nil];
                         [stack addObject:dic];
@@ -307,44 +307,13 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
     }@catch(NSString* s){
         NSLog(@"%@",[sentence description]);
         NSLog(@"%@",[stack description]);
-        NSAlert* alert=[[NSAlert alloc] init];
-        [alert setMessageText:[NSString stringWithFormat:@"%@ \"%@\" at code #%x",NSLocalizedString(@"msgErrorOccured", nil),s,code_position]];
-        [alert setAlertStyle:NSCriticalAlertStyle];
-        [alert addButtonWithTitle:NSLocalizedString(@"msgAbort", nil)];
-        [alert addButtonWithTitle:NSLocalizedString(@"msgStop", nil)];
-        [alert addButtonWithTitle:NSLocalizedString(@"msgContinue", nil)];
-        NSInteger res=[alert runModal];
-        switch (res) {
-            case NSAlertFirstButtonReturn:
-                [[view window] close];
-                break;
-            case NSAlertSecondButtonReturn:
-                code_position=-1;
-                break;
-            case NSAlertThirdButtonReturn:
-                break;
-        }
+        NSString* msg=[NSString stringWithFormat:@"%@ \"%@\" at code #%x",NSLocalizedString(@"msgErrorOccured", nil),s,code_position];
+        [self exceptionDialogWithMessage:msg information:nil];
     }@catch(NSException* e){
         NSLog(@"%@",[sentence description]);
         NSLog(@"%@",[stack description]);
-        NSAlert* alert=[[NSAlert alloc] init];
-        [alert setMessageText:[NSString stringWithFormat:@"%@ \"%@\" at code #%x",NSLocalizedString(@"msgErrorOccured", nil),[e name],code_position]];
-        [alert setInformativeText:[e reason]];
-        [alert setAlertStyle:NSCriticalAlertStyle];
-        [alert addButtonWithTitle:NSLocalizedString(@"msgAbort", nil)];
-        [alert addButtonWithTitle:NSLocalizedString(@"msgStop", nil)];
-        [alert addButtonWithTitle:NSLocalizedString(@"msgContinue", nil)];
-        NSInteger res=[alert runModal];
-        switch (res) {
-            case NSAlertFirstButtonReturn:
-                [[view window] close];
-                break;
-            case NSAlertSecondButtonReturn:
-                code_position=-1;
-                break;
-            case NSAlertThirdButtonReturn:
-                break;
-        }
+        NSString* msg=[NSString stringWithFormat:@"%@ \"%@\" at code #%x",NSLocalizedString(@"msgErrorOccured", nil),[e name],code_position];
+        [self exceptionDialogWithMessage:msg information:[e reason]];
     }
 }
 
@@ -356,11 +325,11 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
     NSLog(@"executing %x %@",type,[sent description]);
     
     cmd=[[sent objectAtIndex:0] intValue];
-    if(type==0x1){
+    if(type==0x1){ // type=VAR
         NSLog(@"[let]");
         [variables setObject:[NSDictionary dictionaryWithObjectsAndKeys:[sent objectAtIndex:1],@"value",@"NUM",@"kind",nil]
                       forKey:[NSString stringWithFormat:@"%ld",cmd]];
-    }else if(type==0x9){ // extcmd
+    }else if(type==0x9){ // type=EXTCMD
         switch (cmd) {
             case 0x0:{
                 NSLog(@"[button]");
@@ -411,13 +380,13 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
                 break;
             }
         }
-    }else if(type==0xa){ // cmpcmd
+    }else if(type==0xb){ // type=EXTSYSVAR
         switch(cmd){
             default:
                 NSLog(@"[unrecognizable command %x]",(int)cmd);
                 break;
         }
-    }else if(type==0xf){ // progcmd
+    }else if(type==0xf){ // type=PROGCMD
         switch(cmd){
             case 0x7:
                 NSLog(@"[wait]");
@@ -572,8 +541,14 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
         current.type=charToShort(code, position);
         position+=2;
         if((current.type&0x8000)!=0){
-            current.code=(unsigned long)charToLong(code, code_position);
+            current.code=(unsigned long)charToLong(code, position);
             [codeViewerText appendFormat:@"%4x : %04x %ld\n",position-2,current.type,current.code];
+            position+=4;
+        }else if((current.type&0x0fff)==0xb){
+            unsigned short a,b;
+            a=(unsigned long)charToShort(code, position);
+            b=(unsigned long)charToShort(code, position+2);
+            [codeViewerText appendFormat:@"%4x : %04x %04x %04x\n",position-2,current.type,a,b];
             position+=4;
         }else{
             current.code=charToShort(code, position);
@@ -600,6 +575,28 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
     }
     [codeViewerText appendFormat:@"\n\n"];
     
+}
+
+- (int)exceptionDialogWithMessage:(NSString*)str information:(NSString*)inf{
+    NSAlert* alert=[[NSAlert alloc] init];
+    [alert setMessageText:str];
+    if(inf!=nil) [alert setInformativeText:inf];
+    [alert setAlertStyle:NSCriticalAlertStyle];
+    [alert addButtonWithTitle:NSLocalizedString(@"msgAbort", nil)];
+    [alert addButtonWithTitle:NSLocalizedString(@"msgStop", nil)];
+    [alert addButtonWithTitle:NSLocalizedString(@"msgContinue", nil)];
+    NSInteger res=[alert runModal];
+    switch (res) {
+        case NSAlertFirstButtonReturn:
+            [[view window] close];
+            break;
+        case NSAlertSecondButtonReturn:
+            code_position=-1;
+            break;
+        case NSAlertThirdButtonReturn:
+            break;
+    }
+    return (int)res;
 }
 
 @end

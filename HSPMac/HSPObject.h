@@ -55,5 +55,7 @@
 - (void)buildCodeViewText;
 - (void)pushTextToCodeView:(NSTextView*)codeViewerView;
 
+- (int)exceptionDialogWithMessage:(NSString*)str information:(NSString*)inf;
+
 
 @end
