@@ -99,13 +99,14 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
     @try{
         if(docPrepared&&viewPrepared){
             if(waitTick>TickCount()) return;
+            [(HSPDocument*)document showCodePosition:code_position];
             if(code_position>=0&&code_position<code_length){
                     
                 current.type=charToShort(code, code_position);
                 code_position+=2;
-                if((current.type&0x8000)!=0){
+                if((current.type&0x8000)!=0||(current.type&0x0fff)==0xb){
                     current.code=(unsigned long)charToLong(code, code_position);
-                    NSLog(@"%4x : %04x %ld",code_position-2,current.type,current.code);
+                    NSLog(@"%4x : %04x %04x %04x",code_position-2,current.type,(unsigned int)(current.code/0x10000),(unsigned int)(current.code%0x10000));
                     code_position+=4;
                 }else{
                     current.code=charToShort(code, code_position);
@@ -137,7 +138,7 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
                 }
                 
                 switch (type) {
-                    case 0: // type=MARK
+                    case TYPE_MARK:
                         if(content==0x3f){
                             //dic=[NSDictionary dictionaryWithObjectsAndKeys:@"",@"value",@"STR",@"kind",nil];
                             dic=[NSDictionary dictionaryWithObjectsAndKeys:@"[blank]",@"value",@"STR",@"kind",nil];
@@ -256,7 +257,7 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
                             @throw [NSString stringWithFormat:@"Stack Overflow during Operation [%x]",content];
                         }
                         break;
-                    case 1: // type=VAR
+                    case TYPE_VAR:
                         if(ex1>0){
                             str=[NSString stringWithFormat:@"%d",content];
                             dic=[NSDictionary dictionaryWithObjectsAndKeys:str,@"value",@"NUM",@"kind",nil];
@@ -266,7 +267,7 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
                             [stack addObject:dic];
                         }
                         break;
-                    case 2: // type=STRING
+                    case TYPE_STR:
                         str=[NSString stringWithCString:&data[content]];
                         dic=[NSDictionary dictionaryWithObjectsAndKeys:str,@"value",@"STR",@"kind",nil];
                         [stack addObject:dic];
@@ -322,14 +323,13 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
     NSMutableAttributedString* atrStr;
     
     unsigned int type=(orig&0x0fff);
-    NSLog(@"executing %x %@",type,[sent description]);
-    
     cmd=[[sent objectAtIndex:0] intValue];
-    if(type==0x1){ // type=VAR
+    NSLog(@"executing %@ %@",[HSPCodeViewerUtils disasmStringWithType:type code:cmd data:data],[sent description]);
+    if(type==TYPE_VAR){
         NSLog(@"[let]");
         [variables setObject:[NSDictionary dictionaryWithObjectsAndKeys:[sent objectAtIndex:1],@"value",@"NUM",@"kind",nil]
                       forKey:[NSString stringWithFormat:@"%ld",cmd]];
-    }else if(type==0x9){ // type=EXTCMD
+    }else if(type==TYPE_XCMD){
         switch (cmd) {
             case 0x0:{
                 NSLog(@"[button]");
@@ -337,9 +337,8 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
                 [button setTitle:[sent objectAtIndex:1]];
                 [view addSubview:button];
                 [subviews addObject:button];
-                int jumpto=(int)code_position+(int)label[[[sent objectAtIndex:2] intValue]];
-                [buttons addObject:[NSDictionary dictionaryWithObjectsAndKeys:button, @"BUTTON",[NSString stringWithFormat:@"%d",jumpto],@"FLAG",nil]];
-                NSLog(@"jumpto:%x(%x+%x)",jumpto,code_position,(int)label[[[sent objectAtIndex:2] intValue]]);
+                int label=[[sent objectAtIndex:2] intValue];
+                [buttons addObject:[NSDictionary dictionaryWithObjectsAndKeys:button, @"BUTTON",[NSString stringWithFormat:@"%d",label],@"FLAG",nil]];
                 [button setAction:@selector(buttonPushed:)];
                 [button setTarget:self];
  //               [button release];
@@ -373,21 +372,34 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
                 NSRectFill(NSMakeRect(0, 0, [buffers[0] size].width, [buffers[0] size].height));
                 [buffers[0] unlockFocus];
                 point=NSMakePoint(0, 0);
+                for(NSDictionary* obj in buttons){
+                    [[obj objectForKey:@"BUTTON"] removeFromSuperview];
+                }
+                [buttons removeAllObjects];
                 [view setNeedsDisplay:YES];
                 break;
             }default:{
-                NSLog(@"[unrecognizable command %x]",(int)cmd);
+                @throw [NSString stringWithFormat:@"[unrecognizable command '%@']",
+                        [HSPCodeViewerUtils disasmStringWithType:TYPE_XCMD code:(int)cmd data:data]];
+
                 break;
             }
         }
-    }else if(type==0xb){ // type=EXTSYSVAR
+    }else if(type==TYPE_XVAR){
         switch(cmd){
             default:
-                NSLog(@"[unrecognizable command %x]",(int)cmd);
+                @throw [NSString stringWithFormat:@"[unrecognizable command '%@']",
+                        [HSPCodeViewerUtils disasmStringWithType:TYPE_XVAR code:(int)cmd data:data]];
+
                 break;
         }
-    }else if(type==0xf){ // type=PROGCMD
+    }else if(type==TYPE_PRGCMD){
         switch(cmd){
+            case 0x0:
+                NSLog(@"[goto]");
+                [self jumpto:[[sent objectAtIndex:1] intValue]];
+                [view setNeedsDisplay:YES];
+                break;
             case 0x7:
                 NSLog(@"[wait]");
                 waitTick=TickCount()+[[sent objectAtIndex:1] intValue]*60/100;
@@ -399,7 +411,25 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
                 [view setNeedsDisplay:YES];
                 break;
             default:
-                NSLog(@"[unrecognizable command %x]",(int)cmd);
+                @throw [NSString stringWithFormat:@"[unrecognizable command '%@']",
+                        [HSPCodeViewerUtils disasmStringWithType:TYPE_PRGCMD code:(int)cmd data:data]];
+
+                break;
+        }
+    }else if(type==TYPE_CMPCMD){
+        NSLog(@"%ld",cmd);
+        unsigned short cmpcmd=cmd%0x10000;
+        unsigned short jumpto=cmd/0x10000;
+        switch(cmpcmd){
+            case 0x0:
+                NSLog(@"[if]");
+                if([[sent objectAtIndex:1] intValue]==0){
+                    [self skipto:jumpto-2];
+                }
+                break;
+            default:
+                @throw [NSString stringWithFormat:@"[unrecognizable command '%@']",
+                        [HSPCodeViewerUtils disasmStringWithType:TYPE_CMPCMD code:(int)cmpcmd data:data]];
                 break;
         }
     }
@@ -504,15 +534,30 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
     return buffers[0];
 }
 
+- (void)jumpto:(int)lb{
+    int jumpto=(int)label[lb]*2;
+    NSLog(@"jump to %x",jumpto);
+    code_position=jumpto;
+    [stack removeAllObjects];
+    [sentence removeAllObjects];
+    return;
+}
+
+- (void)skipto:(int)sk{
+    int jumpto=code_position+sk;
+    NSLog(@"skip to %x",jumpto);
+    code_position=jumpto;
+    [stack removeAllObjects];
+    [sentence removeAllObjects];
+    return;
+}
+
 - (void)buttonPushed:(id)sender{
     NSDictionary* dict;
     NSLog(@"BUTTON PUSHED");
     for(dict in buttons){
         if([dict objectForKey:@"BUTTON"] == sender){
-            int jumpto=(int)[[dict objectForKey:@"FLAG"] intValue];
-            NSLog(@"jump to %x",jumpto);
-            code_position=jumpto;
-            return;
+            [self jumpto:[[dict objectForKey:@"FLAG"] intValue]];
         }
     }
 }
@@ -542,19 +587,21 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
         position+=2;
         if((current.type&0x8000)!=0){
             current.code=(unsigned long)charToLong(code, position);
-            [codeViewerText appendFormat:@"%4x : %04x %ld\n",position-2,current.type,current.code];
+            [codeViewerText appendFormat:@"%4x : %04x %ld",position-2,current.type,current.code];
             position+=4;
         }else if((current.type&0x0fff)==0xb){
             unsigned short a,b;
             a=(unsigned long)charToShort(code, position);
             b=(unsigned long)charToShort(code, position+2);
-            [codeViewerText appendFormat:@"%4x : %04x %04x %04x\n",position-2,current.type,a,b];
+            [codeViewerText appendFormat:@"%4x : %04x %04x %04x",position-2,current.type,a,b];
             position+=4;
         }else{
             current.code=charToShort(code, position);
-            [codeViewerText appendFormat:@"%4x : %04x %04x\n",position-2,current.type,(unsigned int)current.code];
+            [codeViewerText appendFormat:@"%4x : %04x %04x     ",position-2,current.type,(unsigned int)current.code];
             position+=2;
         }
+        [codeViewerText appendFormat:@"  : %@",disasm(current,data)];
+        [codeViewerText appendFormat:@"\n"];
     }
     [codeViewerText appendFormat:@"\n"];
     

@@ -7,7 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "HSPDocument.h"
 #import "openhsp.h"
+#import "HSPCodeViewerUtils.h"
+
+@class HSPDocument;
 
 #define BUFMAX 12
 
@@ -17,8 +21,9 @@
     int code_position;
     int waitTick;
     
-    NSImage* buffers[BUFMAX];
     NSDocument* document;
+    
+    NSImage* buffers[BUFMAX];
     NSView* view;
     NSMutableArray* sentence;
     NSMutableArray* stack;
