@@ -68,4 +68,8 @@
     [codeViewerPanel orderFront:self];
 }
 
+- (void)showCodePosition:(int)cp{
+    [codePositionField setAttributedStringValue:[[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"Code Position : %x",cp] attributes:nil]];
+}
+
 @end

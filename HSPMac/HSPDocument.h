@@ -9,10 +9,13 @@
 #import <Cocoa/Cocoa.h>
 #import "HSPObject.h"
 
+@class HSPObject;
+
 @interface HSPDocument : NSDocument{
     IBOutlet id view;
     IBOutlet NSPanel* codeViewerPanel;
     IBOutlet NSTextView* codeViewerView;
+    IBOutlet NSTextField* codePositionField;
     
     HSPObject* object;
 }
@@ -21,5 +24,7 @@
 
 - (id)view;
 - (HSPObject*)object;
+
+- (void)showCodePosition:(int)cp;
 
 @end

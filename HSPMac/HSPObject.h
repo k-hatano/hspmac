@@ -7,18 +7,23 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "HSPDocument.h"
 #import "openhsp.h"
+#import "HSPCodeViewerUtils.h"
+
+@class HSPDocument;
 
 #define BUFMAX 12
 
 @interface HSPObject : NSObject{
-    BOOL docPrepared,viewPrepared;
-    int code_length,data_length,label_length;
+    BOOL docPrepared,viewPrepared,omit_flag;
+    int code_length,data_length,label_length,orig;
     int code_position;
     int waitTick;
     
-    NSImage* buffers[BUFMAX];
     NSDocument* document;
+    
+    NSImage* buffers[BUFMAX];
     NSView* view;
     NSMutableArray* sentence;
     NSMutableArray* stack;
@@ -34,7 +39,7 @@
     HSPHED hed;
     unsigned char* code;
     unsigned char* data;
-    long* label;
+    unsigned long* label;
 }
 
 - (id)init;
@@ -54,6 +59,8 @@
 - (void)buttonPushed:(id)sender;
 - (void)buildCodeViewText;
 - (void)pushTextToCodeView:(NSTextView*)codeViewerView;
+
+- (int)exceptionDialogWithMessage:(NSString*)str information:(NSString*)inf;
 
 
 @end
