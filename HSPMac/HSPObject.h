@@ -16,8 +16,8 @@
 #define BUFMAX 12
 
 @interface HSPObject : NSObject{
-    BOOL docPrepared,viewPrepared;
-    int code_length,data_length,label_length;
+    BOOL docPrepared,viewPrepared,omit_flag;
+    int code_length,data_length,label_length,orig;
     int code_position;
     int waitTick;
     

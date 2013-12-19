@@ -43,7 +43,9 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
         code=NULL;
         data=NULL;
         label=NULL;
+        omit_flag=NO;
         code_position=0;
+        orig=-1;
         timer=[NSTimer scheduledTimerWithTimeInterval:0.001 target:self selector:@selector(idle:) userInfo:nil repeats:YES];
         sentence=[[NSMutableArray alloc] init];
         stack=[[NSMutableArray alloc] init];
@@ -87,7 +89,6 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
 
 - (void)idle:(NSTimer*)timer{
     HSPCODE current;
-    static int orig=-1;
     unsigned int ex0,ex1,ex2,ex3,type;
     unsigned int content;
     NSString *str;
@@ -106,11 +107,11 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
                 code_position+=2;
                 if((current.type&0x8000)!=0||(current.type&0x0fff)==0xb){
                     current.code=(unsigned long)charToLong(code, code_position);
-                    NSLog(@"%4x : %04x %04x %04x",code_position-2,current.type,(unsigned int)(current.code/0x10000),(unsigned int)(current.code%0x10000));
+                    NSLog(@"%4x : %04x %04x %04x : %@: %@",code_position-2,current.type,(unsigned int)(current.code/0x10000),(unsigned int)(current.code%0x10000),[HSPCodeViewerUtils sentenceToString:sentence],[HSPCodeViewerUtils stackToString:stack]);
                     code_position+=4;
                 }else{
                     current.code=charToShort(code, code_position);
-                    NSLog(@"%4x : %04x %04x",code_position-2,current.type,(unsigned int)current.code);
+                    NSLog(@"%4x : %04x %04x : %@: %@",code_position-2,current.type,(unsigned int)current.code,[HSPCodeViewerUtils sentenceToString:sentence],[HSPCodeViewerUtils stackToString:stack]);
                     code_position+=2;
                 }
                 
@@ -136,7 +137,6 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
                     [stack removeAllObjects];
                     [sentence removeAllObjects];
                 }
-                
                 switch (type) {
                     case TYPE_MARK:
                         if(content==0x3f){
@@ -217,22 +217,22 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
                                         [stack addObject:dic];
                                         break;
                                     case 10:
-                                        str=[NSString stringWithFormat:@"%d",ad<bd];
-                                        dic=[NSDictionary dictionaryWithObjectsAndKeys:str,@"value",@"NUM",@"kind",nil];
-                                        [stack addObject:dic];
-                                        break;
-                                    case 11:
                                         str=[NSString stringWithFormat:@"%d",ad>bd];
                                         dic=[NSDictionary dictionaryWithObjectsAndKeys:str,@"value",@"NUM",@"kind",nil];
                                         [stack addObject:dic];
                                         break;
+                                    case 11:
+                                        str=[NSString stringWithFormat:@"%d",ad<bd];
+                                        dic=[NSDictionary dictionaryWithObjectsAndKeys:str,@"value",@"NUM",@"kind",nil];
+                                        [stack addObject:dic];
+                                        break;
                                     case 12:
-                                        str=[NSString stringWithFormat:@"%d",ad<=bd];
+                                        str=[NSString stringWithFormat:@"%d",ad>=bd];
                                         dic=[NSDictionary dictionaryWithObjectsAndKeys:str,@"value",@"NUM",@"kind",nil];
                                         [stack addObject:dic];
                                         break;
                                     case 13:
-                                        str=[NSString stringWithFormat:@"%d",ad>=bd];
+                                        str=[NSString stringWithFormat:@"%d",ad<=bd];
                                         dic=[NSDictionary dictionaryWithObjectsAndKeys:str,@"value",@"NUM",@"kind",nil];
                                         [stack addObject:dic];
                                         break;
@@ -250,8 +250,8 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
                                         @throw [NSString stringWithFormat:@"Unrecognizable Operation [%x]",content];
                                 }
                             }
-//                            [b release];
-//                            [a release];
+                            //                            [b release];
+                            //                            [a release];
                         }else{
                             if(content==8) break;
                             @throw [NSString stringWithFormat:@"Stack Overflow during Operation [%x]",content];
@@ -279,6 +279,7 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
                         break;
                 }
             }
+            
             if(code_position>=code_length){
                 
                 if([stack count]>0){
@@ -322,9 +323,15 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
     unsigned long cmd=0;
     NSMutableAttributedString* atrStr;
     
+    if(omit_flag){
+        NSLog(@"omitted");
+        omit_flag=NO;
+        return YES;
+    }
+    
     unsigned int type=(orig&0x0fff);
     cmd=[[sent objectAtIndex:0] intValue];
-    NSLog(@"executing %@ %@",[HSPCodeViewerUtils disasmStringWithType:type code:cmd data:data],[sent description]);
+    NSLog(@"executing %@ ( %@)",[HSPCodeViewerUtils disasmStringWithType:type code:(unsigned short)cmd data:data label:label],[HSPCodeViewerUtils sentenceToString:sent]);
     if(type==TYPE_VAR){
         NSLog(@"[let]");
         [variables setObject:[NSDictionary dictionaryWithObjectsAndKeys:[sent objectAtIndex:1],@"value",@"NUM",@"kind",nil]
@@ -380,7 +387,7 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
                 break;
             }default:{
                 @throw [NSString stringWithFormat:@"[unrecognizable command '%@']",
-                        [HSPCodeViewerUtils disasmStringWithType:TYPE_XCMD code:(int)cmd data:data]];
+                        [HSPCodeViewerUtils disasmStringWithType:TYPE_XCMD code:(int)cmd data:data label:label]];
 
                 break;
             }
@@ -389,7 +396,7 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
         switch(cmd){
             default:
                 @throw [NSString stringWithFormat:@"[unrecognizable command '%@']",
-                        [HSPCodeViewerUtils disasmStringWithType:TYPE_XVAR code:(int)cmd data:data]];
+                        [HSPCodeViewerUtils disasmStringWithType:TYPE_XVAR code:(int)cmd data:data label:label]];
 
                 break;
         }
@@ -398,6 +405,7 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
             case 0x0:
                 NSLog(@"[goto]");
                 [self jumpto:[[sent objectAtIndex:1] intValue]];
+                omit_flag=YES;
                 [view setNeedsDisplay:YES];
                 break;
             case 0x7:
@@ -412,7 +420,7 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
                 break;
             default:
                 @throw [NSString stringWithFormat:@"[unrecognizable command '%@']",
-                        [HSPCodeViewerUtils disasmStringWithType:TYPE_PRGCMD code:(int)cmd data:data]];
+                        [HSPCodeViewerUtils disasmStringWithType:TYPE_PRGCMD code:(int)cmd data:data label:label]];
 
                 break;
         }
@@ -424,12 +432,13 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
             case 0x0:
                 NSLog(@"[if]");
                 if([[sent objectAtIndex:1] intValue]==0){
-                    [self skipto:jumpto-2];
+                    [self skipto:jumpto-6];
+                    omit_flag=YES;
                 }
                 break;
             default:
                 @throw [NSString stringWithFormat:@"[unrecognizable command '%@']",
-                        [HSPCodeViewerUtils disasmStringWithType:TYPE_CMPCMD code:(int)cmpcmd data:data]];
+                        [HSPCodeViewerUtils disasmStringWithType:TYPE_CMPCMD code:(int)cmpcmd data:data label:label]];
                 break;
         }
     }
@@ -537,18 +546,16 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
 - (void)jumpto:(int)lb{
     int jumpto=(int)label[lb]*2;
     NSLog(@"jump to %x",jumpto);
+    orig=-1;
     code_position=jumpto;
-    [stack removeAllObjects];
-    [sentence removeAllObjects];
     return;
 }
 
 - (void)skipto:(int)sk{
     int jumpto=code_position+sk;
     NSLog(@"skip to %x",jumpto);
+    orig=-1;
     code_position=jumpto;
-    [stack removeAllObjects];
-    [sentence removeAllObjects];
     return;
 }
 
@@ -582,7 +589,7 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
     [codeViewerText appendFormat:@"\n"];
     
     [codeViewerText appendFormat:@"## Code Segment (%04x~;%04x) ##\n",hed.pt_cs,hed.max_cs];
-    while(position<=hed.max_cs){
+    while(position<hed.max_cs){
         current.type=charToShort(code, position);
         position+=2;
         if((current.type&0x8000)!=0){
@@ -600,7 +607,7 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
             [codeViewerText appendFormat:@"%4x : %04x %04x     ",position-2,current.type,(unsigned int)current.code];
             position+=2;
         }
-        [codeViewerText appendFormat:@"  : %@",disasm(current,data)];
+        [codeViewerText appendFormat:@"  : %@",disasm(current,data,label)];
         [codeViewerText appendFormat:@"\n"];
     }
     [codeViewerText appendFormat:@"\n"];

@@ -29,10 +29,12 @@
 #define TYPE_DLLCTR     17
 #define TYPE_USRDEF     18
 
-NSString* disasm(HSPCODE current,unsigned char* data);
+NSString* disasm(HSPCODE current,unsigned char* data,unsigned long* label);
 
 @interface HSPCodeViewerUtils : NSObject
 
-+ (NSString*)disasmStringWithType:(int)type code:(int)code data:(unsigned char*)data;
++ (NSString*)disasmStringWithType:(int)type code:(int)code data:(unsigned char*)data label:(unsigned long*)label;
++ (NSString*)sentenceToString:(NSArray*)sentence;
++ (NSString*)stackToString:(NSArray*)stack;
 
 @end
