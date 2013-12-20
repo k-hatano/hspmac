@@ -10,7 +10,7 @@
 
 NSString*types[]={@"MARK",@"VAR",@"STR",@"FLOAT",@"INT",@"STRUCT",@"XLABEL",@"LABEL",@"CMD",@"XCMD",@"XVAR",@"CMPCMD",@"MODCMD",@"FUNC",@"SYSVAR",@"PRGCMD",@"DLLFNC",@"DLLCTR",@"USRDEF"};
 
-NSString*xcmds[]={@"button",@"chgdisp",@"exec",@"dialog",@"",@"",@"",@"palfade",@"mmload",@"mmplay",@"mmstop",@"mci",@"pset",@"pget",@"syscolor",@"mes",@"title",@"pos",@"circle",@"cls",@"font",@"sysfont",@"objsize",@"picload",@"color",@"palcolor",@"palette",@"redraw",@"width",@"gsel",@"gcopy",@"gzoom",@"gmode",@"bmpsave",@"text",@"hsvcolor",@"getkey",@"listbox",@"chkbox",@"combox",@"inpot",@"mesbox",@"buffer",@"screen",@"bgscr",@"mouse",@"objsel",@"groll",@"line",@"clrobj",@"boxf"};
+NSString*xcmds[]={@"button",@"chgdisp",@"exec",@"dialog",@"",@"",@"",@"palfade",@"mmload",@"mmplay",@"mmstop",@"mci",@"pset",@"pget",@"syscolor",@"mes",@"title",@"pos",@"circle",@"cls",@"font",@"sysfont",@"objsize",@"picload",@"color",@"palcolor",@"palette",@"redraw",@"width",@"gsel",@"gcopy",@"gzoom",@"gmode",@"bmpsave",@"hsvcolor",@"getkey",@"listbox",@"chkbox",@"combox",@"input",@"mesbox",@"buffer",@"screen",@"bgscr",@"mouse",@"objsel",@"groll",@"line",@"clrobj",@"boxf"};
 
 NSString*progcmds[]={@"goto",@"gosub",@"return",@"break",@"repeat",@"loop",@"continue",@"wait",@"await",@"dim",@"sdim",@"skiperr",@"eachchk",@"dimtype",@"dup",@"dupptr",@"end",@"stop",@"newmod",@"setmod",@"delmod",@"alloc",@"mref",@"run", @"exgoto",@"on",@"mcall",@"assert",@"logmes",@"newlab",@"resume",@"yield"};
 

@@ -31,10 +31,10 @@
     NSMutableArray* subviews;
     NSMutableDictionary* variables;
     NSMutableArray* buttons;
-    
     NSMutableString* codeViewerText;
     
     NSPoint point;
+    NSColor* color;
     
     HSPHED hed;
     unsigned char* code;

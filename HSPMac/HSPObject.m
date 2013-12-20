@@ -58,6 +58,7 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
             buffers[i]=nil;
         }
         waitTick=0;
+        color=[NSColor blackColor];
     }
     return self;
 }
@@ -336,7 +337,7 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
         NSLog(@"[let]");
         [variables setObject:[NSDictionary dictionaryWithObjectsAndKeys:[sent objectAtIndex:1],@"value",@"NUM",@"kind",nil]
                       forKey:[NSString stringWithFormat:@"%ld",cmd]];
-    }else if(type==TYPE_XCMD){
+    }else if(type==TYPE_XCMD){ // 9
         switch (cmd) {
             case 0x0:{
                 NSLog(@"[button]");
@@ -355,9 +356,9 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
             }case 0xf:{
                 NSLog(@"[mes]");
                 [buffers[0] lockFocus];
-                [[NSColor blackColor] set];
+                [color set];
                 atrStr=[[NSMutableAttributedString alloc] initWithString:[sent objectAtIndex:1]];
-                [atrStr	addAttribute:NSForegroundColorAttributeName value:[NSColor blackColor]
+                [atrStr	addAttribute:NSForegroundColorAttributeName value:color
                                range:NSMakeRange(0, [[sent objectAtIndex:1] length])];
                 [atrStr addAttribute:NSFontAttributeName
                                value:[NSFont systemFontOfSize:12.0f]
@@ -384,6 +385,13 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
                 }
                 [buttons removeAllObjects];
                 [view setNeedsDisplay:YES];
+                break;
+            }case 0x18:{
+                NSLog(@"[color]");
+                int r=[[sent objectAtIndex:1] intValue];
+                int g=[[sent objectAtIndex:2] intValue];
+                int b=[[sent objectAtIndex:3] intValue];
+                color=[NSColor colorWithCalibratedRed:r/256.0f green:g/256.f blue:b/256.0f alpha:1.0f];
                 break;
             }default:{
                 @throw [NSString stringWithFormat:@"[unrecognizable command '%@']",
@@ -642,12 +650,14 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
     NSInteger res=[alert runModal];
     switch (res) {
         case NSAlertFirstButtonReturn:
+            code_position=-1;
             [[view window] close];
             break;
         case NSAlertSecondButtonReturn:
             code_position=-1;
             break;
         case NSAlertThirdButtonReturn:
+            [sentence removeAllObjects];
             break;
     }
     return (int)res;
