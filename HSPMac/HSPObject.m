@@ -8,8 +8,15 @@
 
 #import "HSPObject.h"
 
-NSPoint convertViewSize(NSPoint point,NSView* view){
-    return NSMakePoint(point.x, [view bounds].size.height-point.y);
+NSPoint convertViewSize(NSPoint point,NSImage* image){
+    return NSMakePoint(point.x, [image size].height-point.y);
+}
+
+NSRect convertViewRect(NSRect rect,NSImage* image){
+    rect.origin=convertViewSize(rect.origin, image);
+    rect.origin.y-=rect.size.height;
+    NSLog(@"%f %f %f %f",rect.origin.x,rect.origin.y,rect.size.width,rect.size.height);
+    return rect;
 }
 
 @implementation HSPObject
@@ -341,7 +348,7 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
         switch (cmd) {
             case 0x0:{
                 NSLog(@"[button]");
-                NSButton* button=[[NSButton alloc] initWithFrame:NSMakeRect(point.x, convertViewSize(point, view).y-24, 64, 24)];
+                NSButton* button=[[NSButton alloc] initWithFrame:NSMakeRect(point.x, convertViewSize(point, buffers[0]).y-24, 64, 24)];
                 [button setTitle:[sent objectAtIndex:1]];
                 [view addSubview:button];
                 [subviews addObject:button];
@@ -364,7 +371,7 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
                                value:[NSFont systemFontOfSize:12.0f]
                                range:NSMakeRange(0, [[sent objectAtIndex:1] length])];
                 point.y+=15;
-                [atrStr drawAtPoint:convertViewSize(point, view)];
+                [atrStr drawAtPoint:convertViewSize(point, buffers[0])];
 //                [atrStr release];
                 [buffers[0] unlockFocus];
                 break;
@@ -372,6 +379,18 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
                 NSLog(@"[pos]");
                 point.x=[[sent objectAtIndex:1] intValue];
                 point.y=[[sent objectAtIndex:2] intValue];
+                break;
+            }case 0x12:{
+                NSLog(@"[circle]");
+                int l=[[sent objectAtIndex:1] intValue];
+                int t=[[sent objectAtIndex:2] intValue];
+                int r=[[sent objectAtIndex:3] intValue];
+                int b=[[sent objectAtIndex:4] intValue];
+                [buffers[0] lockFocus];
+                NSBezierPath *circle=[NSBezierPath bezierPathWithOvalInRect:convertViewRect(NSMakeRect(l, t, r-l, b-t),buffers[0])];
+                [color set];
+                [circle fill];
+                [buffers[0] unlockFocus];
                 break;
             }case 0x13:{
                 NSLog(@"[cls]");
@@ -392,6 +411,17 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
                 int g=[[sent objectAtIndex:2] intValue];
                 int b=[[sent objectAtIndex:3] intValue];
                 color=[NSColor colorWithCalibratedRed:r/256.0f green:g/256.f blue:b/256.0f alpha:1.0f];
+                break;
+            }case 0x31:{
+                NSLog(@"[boxf]");
+                int l=[[sent objectAtIndex:1] intValue];
+                int t=[[sent objectAtIndex:2] intValue];
+                int r=[[sent objectAtIndex:3] intValue];
+                int b=[[sent objectAtIndex:4] intValue];
+                [buffers[0] lockFocus];
+                [color set];
+                NSRectFill(convertViewRect(NSMakeRect(l, t, r-l, b-t),buffers[0]));
+                [buffers[0] unlockFocus];
                 break;
             }default:{
                 @throw [NSString stringWithFormat:@"[unrecognizable command '%@']",
