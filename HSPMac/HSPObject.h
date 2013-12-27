@@ -10,6 +10,8 @@
 #import "HSPDocument.h"
 #import "openhsp.h"
 #import "HSPCodeViewerUtils.h"
+#import "NSArray+HSPSentence.h"
+#import "NSDictionary+HSPValue.h"
 
 @class HSPDocument;
 

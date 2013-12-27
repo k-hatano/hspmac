@@ -115,11 +115,11 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
                 code_position+=2;
                 if((current.type&0x8000)!=0||(current.type&0x0fff)==0xb){
                     current.code=(unsigned long)charToLong(code, code_position);
-                    NSLog(@"%4x : %04x %04x %04x : %@: %@",code_position-2,current.type,(unsigned int)(current.code/0x10000),(unsigned int)(current.code%0x10000),[HSPCodeViewerUtils sentenceToString:sentence],[HSPCodeViewerUtils stackToString:stack]);
+                    NSLog(@"%4x : %04x %04x %04x : %@: %@",code_position-2,current.type,(unsigned int)(current.code/0x10000),(unsigned int)(current.code%0x10000),[sentence toString],[stack toString]);
                     code_position+=4;
                 }else{
                     current.code=charToShort(code, code_position);
-                    NSLog(@"%4x : %04x %04x : %@: %@",code_position-2,current.type,(unsigned int)current.code,[HSPCodeViewerUtils sentenceToString:sentence],[HSPCodeViewerUtils stackToString:stack]);
+                    NSLog(@"%4x : %04x %04x : %@: %@",code_position-2,current.type,(unsigned int)current.code,[sentence toString],[stack toString]);
                     code_position+=2;
                 }
                 
@@ -134,7 +134,7 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
                 if((ex2||ex1)&&[stack count]>0){
                     for(NSDictionary* d in stack){
                         // point.x=[[sent objectAtIndex:1] intValue];
-                       [sentence addObject:[d objectForKey:@"value"]];
+                       [sentence addObject:d];
                     }
                     [stack removeAllObjects];
                 }
@@ -149,22 +149,22 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
                     case TYPE_MARK:
                         if(content==0x3f){
                             //dic=[NSDictionary dictionaryWithObjectsAndKeys:@"",@"value",@"STR",@"kind",nil];
-                            dic=[NSDictionary dictionaryWithObjectsAndKeys:@"[blank]",@"value",@"STR",@"kind",nil];
+                            dic=[NSDictionary getDictionaryValue:@"[blank]" as:@"STR"];
                             [stack addObject:dic];
                             break;
                         }else if(content=='('||content==')'){
                             break;
                         }else if([stack count]>=2){
-                            b=[stack lastObject];
+                            b=[[stack lastObject] getDictionaryValueForVariables:variables];
                             [stack removeLastObject];
-                            a=[stack lastObject];
+                            a=[[stack lastObject] getDictionaryValueForVariables:variables];
                             [stack removeLastObject];
-                            if([[a objectForKey:@"kind"] isEqualTo:@"STR"]||[[b objectForKey:@"kind"] isEqualTo:@"STR"]){
+                            if([[a getKind] isEqualTo:@"STR"]||[[b getKind] isEqualTo:@"STR"]){
                                 switch(content){
                                     case 0:
                                         str=[NSString stringWithFormat:@"%@%@",
                                              [a objectForKey:@"value"],[b objectForKey:@"value"]];
-                                        dic=[NSDictionary dictionaryWithObjectsAndKeys:str,@"value",@"STR",@"kind",nil];
+                                        dic=[NSDictionary getDictionaryValue:str as:@"STR"];
                                         [stack addObject:dic];
                                         break;
                                     default:
@@ -176,82 +176,82 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
                                 switch(content){
                                     case 0:
                                         str=[NSString stringWithFormat:@"%d",ad+bd];
-                                        dic=[NSDictionary dictionaryWithObjectsAndKeys:str,@"value",@"NUM",@"kind",nil];
+                                        dic=[NSDictionary getDictionaryValue:str as:@"NUM"];
                                         [stack addObject:dic];
                                         break;
                                     case 1:
                                         str=[NSString stringWithFormat:@"%d",ad-bd];
-                                        dic=[NSDictionary dictionaryWithObjectsAndKeys:str,@"value",@"NUM",@"kind",nil];
+                                        dic=[NSDictionary getDictionaryValue:str as:@"NUM"];
                                         [stack addObject:dic];
                                         break;
                                     case 2:
                                         str=[NSString stringWithFormat:@"%d",ad*bd];
-                                        dic=[NSDictionary dictionaryWithObjectsAndKeys:str,@"value",@"NUM",@"kind",nil];
+                                        dic=[NSDictionary getDictionaryValue:str as:@"NUM"];
                                         [stack addObject:dic];
                                         break;
                                     case 3:
                                         str=[NSString stringWithFormat:@"%d",ad/bd];
-                                        dic=[NSDictionary dictionaryWithObjectsAndKeys:str,@"value",@"NUM",@"kind",nil];
+                                        dic=[NSDictionary getDictionaryValue:str as:@"NUM"];
                                         [stack addObject:dic];
                                         break;
                                     case 4:
                                         str=[NSString stringWithFormat:@"%d",ad%bd];
-                                        dic=[NSDictionary dictionaryWithObjectsAndKeys:str,@"value",@"NUM",@"kind",nil];
+                                        dic=[NSDictionary getDictionaryValue:str as:@"NUM"];
                                         [stack addObject:dic];
                                         break;
                                     case 5:
                                         str=[NSString stringWithFormat:@"%d",ad&bd];
-                                        dic=[NSDictionary dictionaryWithObjectsAndKeys:str,@"value",@"NUM",@"kind",nil];
+                                        dic=[NSDictionary getDictionaryValue:str as:@"NUM"];
                                         [stack addObject:dic];
                                         break;
                                     case 6:
                                         str=[NSString stringWithFormat:@"%d",ad|bd];
-                                        dic=[NSDictionary dictionaryWithObjectsAndKeys:str,@"value",@"NUM",@"kind",nil];
+                                        dic=[NSDictionary getDictionaryValue:str as:@"NUM"];
                                         [stack addObject:dic];
                                         break;
                                     case 7:
                                         str=[NSString stringWithFormat:@"%d",ad^bd];
-                                        dic=[NSDictionary dictionaryWithObjectsAndKeys:str,@"value",@"NUM",@"kind",nil];
+                                        dic=[NSDictionary getDictionaryValue:str as:@"NUM"];
                                         [stack addObject:dic];
                                         break;
                                     case 8:
                                         str=[NSString stringWithFormat:@"%d",ad==bd];
-                                        dic=[NSDictionary dictionaryWithObjectsAndKeys:str,@"value",@"NUM",@"kind",nil];
+                                        dic=[NSDictionary getDictionaryValue:str as:@"NUM"];
                                         [stack addObject:dic];
                                         break;
                                     case 9:
                                         str=[NSString stringWithFormat:@"%d",ad!=bd];
-                                        dic=[NSDictionary dictionaryWithObjectsAndKeys:str,@"value",@"NUM",@"kind",nil];
+                                        dic=[NSDictionary getDictionaryValue:str as:@"NUM"];
                                         [stack addObject:dic];
                                         break;
                                     case 10:
                                         str=[NSString stringWithFormat:@"%d",ad>bd];
-                                        dic=[NSDictionary dictionaryWithObjectsAndKeys:str,@"value",@"NUM",@"kind",nil];
+                                        dic=[NSDictionary getDictionaryValue:str as:@"NUM"];
                                         [stack addObject:dic];
                                         break;
                                     case 11:
                                         str=[NSString stringWithFormat:@"%d",ad<bd];
-                                        dic=[NSDictionary dictionaryWithObjectsAndKeys:str,@"value",@"NUM",@"kind",nil];
+                                        dic=[NSDictionary getDictionaryValue:str as:@"NUM"];
                                         [stack addObject:dic];
                                         break;
                                     case 12:
                                         str=[NSString stringWithFormat:@"%d",ad>=bd];
-                                        dic=[NSDictionary dictionaryWithObjectsAndKeys:str,@"value",@"NUM",@"kind",nil];
+                                        dic=[NSDictionary getDictionaryValue:str as:@"NUM"];
                                         [stack addObject:dic];
                                         break;
                                     case 13:
                                         str=[NSString stringWithFormat:@"%d",ad<=bd];
-                                        dic=[NSDictionary dictionaryWithObjectsAndKeys:str,@"value",@"NUM",@"kind",nil];
+                                        dic=[NSDictionary getDictionaryValue:str as:@"NUM"];
                                         [stack addObject:dic];
                                         break;
                                     case 14:
                                         str=[NSString stringWithFormat:@"%d",ad<<bd];
-                                        dic=[NSDictionary dictionaryWithObjectsAndKeys:str,@"value",@"NUM",@"kind",nil];
+                                        dic=[NSDictionary getDictionaryValue:str as:@"NUM"];
                                         [stack addObject:dic];
                                         break;
                                     case 15:
                                         str=[NSString stringWithFormat:@"%d",ad>>bd];
-                                        dic=[NSDictionary dictionaryWithObjectsAndKeys:str,@"value",@"NUM",@"kind",nil];
+                                        dic=[NSDictionary getDictionaryValue:str as:@"NUM"];
                                         [stack addObject:dic];
                                         break;
                                     default:
@@ -268,21 +268,21 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
                     case TYPE_VAR:
                         if(ex1>0){
                             str=[NSString stringWithFormat:@"%d",content];
-                            dic=[NSDictionary dictionaryWithObjectsAndKeys:str,@"value",@"NUM",@"kind",nil];
+                            dic=[NSDictionary getDictionaryValue:str as:@"NUM"];
                             [stack addObject:dic];
                         }else{
-                            dic=[variables objectForKey:[NSString stringWithFormat:@"%d",content]];
+                            dic=[NSDictionary getDictionaryValue:[NSString stringWithFormat:@"%d",content] as:@"VAR"];
                             [stack addObject:dic];
                         }
                         break;
                     case TYPE_STR:
                         str=[NSString stringWithCString:&data[content]];
-                        dic=[NSDictionary dictionaryWithObjectsAndKeys:str,@"value",@"STR",@"kind",nil];
+                        dic=[NSDictionary getDictionaryValue:str as:@"STR"];
                         [stack addObject:dic];
                         break;
                     default:
                         str=[NSString stringWithFormat:@"%d",content];
-                        dic=[NSDictionary dictionaryWithObjectsAndKeys:str,@"value",@"NUM",@"kind",nil];
+                        dic=[NSDictionary getDictionaryValue:str as:@"NUM"];
                         [stack addObject:dic];
                         break;
                 }
@@ -292,7 +292,7 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
                 
                 if([stack count]>0){
                     for(NSDictionary* d in stack){
-                        [sentence addObject:[d objectForKey:@"value"]];
+                        [sentence addObject:d];
                     }
                     [stack removeAllObjects];
                 }
@@ -338,38 +338,37 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
     }
     
     unsigned int type=(orig&0x0fff);
-    cmd=[[sent objectAtIndex:0] intValue];
-    NSLog(@"executing %@ ( %@)",[HSPCodeViewerUtils disasmStringWithType:type code:(unsigned short)cmd data:data label:label],[HSPCodeViewerUtils sentenceToString:sent]);
+    cmd=[[sent objectAtIndex:0] getNumericValueForVariables:variables];
+    NSLog(@"executing %@ ( %@)",[HSPCodeViewerUtils disasmStringWithType:type code:(unsigned short)cmd data:data label:label],[sent toString]);
     if(type==TYPE_VAR){
         NSLog(@"[let]");
-        [variables setObject:[NSDictionary dictionaryWithObjectsAndKeys:[sent objectAtIndex:1],@"value",@"NUM",@"kind",nil]
+        [variables setObject:[sent objectAtIndex:1]
                       forKey:[NSString stringWithFormat:@"%ld",cmd]];
     }else if(type==TYPE_XCMD){ // 9
         switch (cmd) {
             case 0x0:{
                 NSLog(@"[button]");
                 NSButton* button=[[NSButton alloc] initWithFrame:NSMakeRect(point.x, convertViewSize(point, buffers[0]).y-24, 64, 24)];
-                [button setTitle:[sent objectAtIndex:1]];
+                [button setTitle:[[sent objectAtIndex:1] getStringValueForVariables:variables]];
                 [view addSubview:button];
                 [subviews addObject:button];
-                int label=[[sent objectAtIndex:2] intValue];
-                [buttons addObject:[NSDictionary dictionaryWithObjectsAndKeys:button, @"BUTTON",[NSString stringWithFormat:@"%d",label],@"FLAG",nil]];
+                int lb=[[sent objectAtIndex:2] getNumericValueForVariables:variables];
+                [buttons addObject:[NSDictionary dictionaryWithObjectsAndKeys:button, @"BUTTON",[NSString stringWithFormat:@"%d",lb],@"FLAG",nil]];
                 [button setAction:@selector(buttonPushed:)];
                 [button setTarget:self];
  //               [button release];
                 point.y+=24;
-                NSLog(@"%@,%@",[sent objectAtIndex:1],[sent objectAtIndex:2]);
                 break;
             }case 0xf:{
                 NSLog(@"[mes]");
                 [buffers[0] lockFocus];
                 [color set];
-                atrStr=[[NSMutableAttributedString alloc] initWithString:[sent objectAtIndex:1]];
+                atrStr=[[NSMutableAttributedString alloc] initWithString:[[sent objectAtIndex:1] getStringValueForVariables:variables]];
                 [atrStr	addAttribute:NSForegroundColorAttributeName value:color
-                               range:NSMakeRange(0, [[sent objectAtIndex:1] length])];
+                               range:NSMakeRange(0, [[[sent objectAtIndex:1] getStringValueForVariables:variables] length])];
                 [atrStr addAttribute:NSFontAttributeName
                                value:[NSFont systemFontOfSize:12.0f]
-                               range:NSMakeRange(0, [[sent objectAtIndex:1] length])];
+                               range:NSMakeRange(0, [[[sent objectAtIndex:1] getStringValueForVariables:variables] length])];
                 point.y+=15;
                 [atrStr drawAtPoint:convertViewSize(point, buffers[0])];
 //                [atrStr release];
@@ -377,15 +376,15 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
                 break;
             }case 0x11:{
                 NSLog(@"[pos]");
-                point.x=[[sent objectAtIndex:1] intValue];
-                point.y=[[sent objectAtIndex:2] intValue];
+                point.x=[[sent objectAtIndex:1] getNumericValueForVariables:variables];
+                point.y=[[sent objectAtIndex:2] getNumericValueForVariables:variables];
                 break;
             }case 0x12:{
                 NSLog(@"[circle]");
-                int l=[[sent objectAtIndex:1] intValue];
-                int t=[[sent objectAtIndex:2] intValue];
-                int r=[[sent objectAtIndex:3] intValue];
-                int b=[[sent objectAtIndex:4] intValue];
+                int l=[[sent objectAtIndex:1] getNumericValueForVariables:variables];
+                int t=[[sent objectAtIndex:2] getNumericValueForVariables:variables];
+                int r=[[sent objectAtIndex:3] getNumericValueForVariables:variables];
+                int b=[[sent objectAtIndex:4] getNumericValueForVariables:variables];
                 [buffers[0] lockFocus];
                 NSBezierPath *circle=[NSBezierPath bezierPathWithOvalInRect:convertViewRect(NSMakeRect(l, t, r-l, b-t),buffers[0])];
                 [color set];
@@ -407,17 +406,30 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
                 break;
             }case 0x18:{
                 NSLog(@"[color]");
-                int r=[[sent objectAtIndex:1] intValue];
-                int g=[[sent objectAtIndex:2] intValue];
-                int b=[[sent objectAtIndex:3] intValue];
+                int r=[[sent objectAtIndex:1] getNumericValueForVariables:variables];
+                int g=[[sent objectAtIndex:2] getNumericValueForVariables:variables];
+                int b=[[sent objectAtIndex:3] getNumericValueForVariables:variables];
                 color=[NSColor colorWithCalibratedRed:r/256.0f green:g/256.f blue:b/256.0f alpha:1.0f];
+                break;
+            }case 0x25:{
+                NSLog(@"[chkbox]");
+                NSButton* button=[[NSButton alloc] initWithFrame:NSMakeRect(point.x, convertViewSize(point, buffers[0]).y-24, 64, 24)];
+                [button setTitle:[[sent objectAtIndex:1] getStringValueForVariables:variables]];
+                [view addSubview:button];
+                [subviews addObject:button];
+                int label=[[sent objectAtIndex:2] getNumericValueForVariables:variables];
+                [buttons addObject:[NSDictionary dictionaryWithObjectsAndKeys:button, @"BUTTON",[NSString stringWithFormat:@"%d",label],@"FLAG",nil]];
+                [button setAction:@selector(buttonPushed:)];
+                [button setTarget:self];
+                //               [button release];
+                point.y+=24;
                 break;
             }case 0x31:{
                 NSLog(@"[boxf]");
-                int l=[[sent objectAtIndex:1] intValue];
-                int t=[[sent objectAtIndex:2] intValue];
-                int r=[[sent objectAtIndex:3] intValue];
-                int b=[[sent objectAtIndex:4] intValue];
+                int l=[[sent objectAtIndex:1] getNumericValueForVariables:variables];
+                int t=[[sent objectAtIndex:2] getNumericValueForVariables:variables];
+                int r=[[sent objectAtIndex:3] getNumericValueForVariables:variables];
+                int b=[[sent objectAtIndex:4] getNumericValueForVariables:variables];
                 [buffers[0] lockFocus];
                 [color set];
                 NSRectFill(convertViewRect(NSMakeRect(l, t, r-l, b-t),buffers[0]));
@@ -442,13 +454,13 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
         switch(cmd){
             case 0x0:
                 NSLog(@"[goto]");
-                [self jumpto:[[sent objectAtIndex:1] intValue]];
+                [self jumpto:[[sent objectAtIndex:1] getNumericValueForVariables:variables]];
                 omit_flag=YES;
                 [view setNeedsDisplay:YES];
                 break;
             case 0x7:
                 NSLog(@"[wait]");
-                waitTick=TickCount()+[[sent objectAtIndex:1] intValue]*60/100;
+                waitTick=TickCount()+[[sent objectAtIndex:1] getNumericValueForVariables:variables]*60/100;
                 [view setNeedsDisplay:YES];
                 break;
             case 0x11:
@@ -469,7 +481,7 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
         switch(cmpcmd){
             case 0x0:
                 NSLog(@"[if]");
-                if([[sent objectAtIndex:1] intValue]==0){
+                if([[sent objectAtIndex:1] getNumericValueForVariables:variables]==0){
                     [self skipto:jumpto-6];
                     omit_flag=YES;
                 }

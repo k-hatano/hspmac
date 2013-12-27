@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "openhsp.h"
+#import "NSArray+HSPSentence.h"
 
 #define TYPE_MARK       0
 #define TYPE_VAR        1
@@ -34,7 +35,5 @@ NSString* disasm(HSPCODE current,unsigned char* data,unsigned long* label);
 @interface HSPCodeViewerUtils : NSObject
 
 + (NSString*)disasmStringWithType:(int)type code:(int)code data:(unsigned char*)data label:(unsigned long*)label;
-+ (NSString*)sentenceToString:(NSArray*)sentence;
-+ (NSString*)stackToString:(NSArray*)stack;
 
 @end
