@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3740DCA3186DC55B00A27C88 /* NSArray+HSPSentence.m in Sources */ = {isa = PBXBuildFile; fileRef = 3740DCA2186DC55B00A27C88 /* NSArray+HSPSentence.m */; };
+		3740DCA6186DC56B00A27C88 /* NSDictionary+HSPValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 3740DCA5186DC56B00A27C88 /* NSDictionary+HSPValue.m */; };
 		375090FF1861733400D4710F /* HSPCodeViewerUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 375090FE1861733400D4710F /* HSPCodeViewerUtils.m */; };
 		37E5F5DB185187BA003433D9 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37E5F5DA185187BA003433D9 /* Cocoa.framework */; };
 		37E5F5E5185187BA003433D9 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 37E5F5E3185187BA003433D9 /* InfoPlist.strings */; };
@@ -38,6 +40,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3740DCA1186DC55B00A27C88 /* NSArray+HSPSentence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSArray+HSPSentence.h"; sourceTree = "<group>"; };
+		3740DCA2186DC55B00A27C88 /* NSArray+HSPSentence.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+HSPSentence.m"; sourceTree = "<group>"; };
+		3740DCA4186DC56B00A27C88 /* NSDictionary+HSPValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+HSPValue.h"; sourceTree = "<group>"; };
+		3740DCA5186DC56B00A27C88 /* NSDictionary+HSPValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+HSPValue.m"; sourceTree = "<group>"; };
 		375090FD1861733400D4710F /* HSPCodeViewerUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HSPCodeViewerUtils.h; sourceTree = "<group>"; };
 		375090FE1861733400D4710F /* HSPCodeViewerUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HSPCodeViewerUtils.m; sourceTree = "<group>"; };
 		37E5F5D7185187BA003433D9 /* HSPMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HSPMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -149,6 +155,10 @@
 				37E5F5E1185187BA003433D9 /* Supporting Files */,
 				375090FD1861733400D4710F /* HSPCodeViewerUtils.h */,
 				375090FE1861733400D4710F /* HSPCodeViewerUtils.m */,
+				3740DCA1186DC55B00A27C88 /* NSArray+HSPSentence.h */,
+				3740DCA2186DC55B00A27C88 /* NSArray+HSPSentence.m */,
+				3740DCA4186DC56B00A27C88 /* NSDictionary+HSPValue.h */,
+				3740DCA5186DC56B00A27C88 /* NSDictionary+HSPValue.m */,
 			);
 			path = HSPMac;
 			sourceTree = "<group>";
@@ -287,6 +297,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				37E5F61C1851881C003433D9 /* HSPDocument.m in Sources */,
+				3740DCA3186DC55B00A27C88 /* NSArray+HSPSentence.m in Sources */,
+				3740DCA6186DC56B00A27C88 /* NSDictionary+HSPValue.m in Sources */,
 				37E5F61D1851881C003433D9 /* HSPObject.m in Sources */,
 				37E5F61E1851881C003433D9 /* HSPView.m in Sources */,
 				37E5F5E7185187BA003433D9 /* main.m in Sources */,

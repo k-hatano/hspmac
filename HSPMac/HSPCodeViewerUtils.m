@@ -82,22 +82,4 @@ NSString* disasm(HSPCODE current,unsigned char* data,unsigned long* label){
     return disasmString(type,code,data,label);
 }
 
-+ (NSString*)sentenceToString:(NSArray*)sentence{
-    NSMutableString* res=[[NSMutableString alloc] init];
-    for(NSString* item in sentence){
-        [res appendString:item];
-        [res appendString:@" "];
-    }
-    return res;
-}
-
-+ (NSString*)stackToString:(NSArray*)stack{
-    NSMutableString* res=[[NSMutableString alloc] init];
-    for(NSDictionary* item in stack){
-        [res appendString:[item valueForKey:@"value"]];
-        [res appendString:@" "];
-    }
-    return res;
-}
-
 @end

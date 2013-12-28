@@ -10,6 +10,8 @@
 #import "HSPDocument.h"
 #import "openhsp.h"
 #import "HSPCodeViewerUtils.h"
+#import "NSArray+HSPSentence.h"
+#import "NSDictionary+HSPValue.h"
 
 @class HSPDocument;
 
@@ -57,6 +59,7 @@
 - (void)setViewPrepared:(NSView*)value;
 
 - (void)buttonPushed:(id)sender;
+- (void)checkboxPushed:(id)sender;
 - (void)buildCodeViewText;
 - (void)pushTextToCodeView:(NSTextView*)codeViewerView;
 
