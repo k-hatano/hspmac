@@ -341,13 +341,11 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
     cmd=[[sent objectAtIndex:0] getNumericValueForVariables:variables];
     NSLog(@"executing %@ ( %@)",[HSPCodeViewerUtils disasmStringWithType:type code:(unsigned short)cmd data:data label:label],[sent toString]);
     if(type==TYPE_VAR){
-        NSLog(@"[let]");
         [variables setObject:[sent objectAtIndex:1]
                       forKey:[NSString stringWithFormat:@"%ld",cmd]];
     }else if(type==TYPE_XCMD){ // 9
         switch (cmd) {
-            case 0x0:{
-                NSLog(@"[button]");
+            case 0x0:{ // button
                 NSButton* button=[[NSButton alloc] initWithFrame:NSMakeRect(point.x, convertViewSize(point, buffers[0]).y-24, 64, 24)];
                 [button setTitle:[[sent objectAtIndex:1] getStringValueForVariables:variables]];
                 [view addSubview:button];
@@ -359,8 +357,28 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
  //               [button release];
                 point.y+=24;
                 break;
-            }case 0xf:{
-                NSLog(@"[mes]");
+            }case 0x3:{ // dialog
+                int type=[[sent objectAtIndex:2] getNumericValueForVariables:variables];
+                NSString* inf=[[sent objectAtIndex:1] getStringValueForVariables:variables];
+                NSString* mes=@"";
+                if([sent count]>=3)             mes=[[sent objectAtIndex:3] getStringValueForVariables:variables];
+                if([mes isEqualToString:@""])   mes=@"HSPMac";
+                NSAlert* alert=[[NSAlert alloc] init];
+                if(type==0){
+                    [alert setMessageText:mes];
+                    [alert setInformativeText:inf];
+                    [alert setAlertStyle:NSInformationalAlertStyle];
+                    [alert addButtonWithTitle:NSLocalizedString(@"msgOK", nil)];
+                }else if(type==1){
+                    [alert setMessageText:mes];
+                    [alert setInformativeText:inf];
+                    [alert setAlertStyle:NSCriticalAlertStyle];
+                    [alert addButtonWithTitle:NSLocalizedString(@"msgOK", nil)];
+                }
+                NSInteger res=[alert runModal];
+                
+                break;
+            }case 0xf:{ // mes
                 [buffers[0] lockFocus];
                 [color set];
                 atrStr=[[NSMutableAttributedString alloc] initWithString:[[sent objectAtIndex:1] getStringValueForVariables:variables]];
@@ -374,13 +392,11 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
 //                [atrStr release];
                 [buffers[0] unlockFocus];
                 break;
-            }case 0x11:{
-                NSLog(@"[pos]");
+            }case 0x11:{ // pos
                 point.x=[[sent objectAtIndex:1] getNumericValueForVariables:variables];
                 point.y=[[sent objectAtIndex:2] getNumericValueForVariables:variables];
                 break;
-            }case 0x12:{
-                NSLog(@"[circle]");
+            }case 0x12:{ // circle
                 int l=[[sent objectAtIndex:1] getNumericValueForVariables:variables];
                 int t=[[sent objectAtIndex:2] getNumericValueForVariables:variables];
                 int r=[[sent objectAtIndex:3] getNumericValueForVariables:variables];
@@ -391,8 +407,7 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
                 [circle fill];
                 [buffers[0] unlockFocus];
                 break;
-            }case 0x13:{
-                NSLog(@"[cls]");
+            }case 0x13:{ // cls
                 [buffers[0] lockFocus];
                 [[NSColor whiteColor] set];
                 NSRectFill(NSMakeRect(0, 0, [buffers[0] size].width, [buffers[0] size].height));
@@ -404,28 +419,27 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
                 [buttons removeAllObjects];
                 [view setNeedsDisplay:YES];
                 break;
-            }case 0x18:{
-                NSLog(@"[color]");
+            }case 0x18:{ // color
                 int r=[[sent objectAtIndex:1] getNumericValueForVariables:variables];
                 int g=[[sent objectAtIndex:2] getNumericValueForVariables:variables];
                 int b=[[sent objectAtIndex:3] getNumericValueForVariables:variables];
                 color=[NSColor colorWithCalibratedRed:r/256.0f green:g/256.f blue:b/256.0f alpha:1.0f];
                 break;
-            }case 0x25:{
-                NSLog(@"[chkbox]");
+            }case 0x25:{ // chkbox
                 NSButton* button=[[NSButton alloc] initWithFrame:NSMakeRect(point.x, convertViewSize(point, buffers[0]).y-24, 64, 24)];
                 [button setTitle:[[sent objectAtIndex:1] getStringValueForVariables:variables]];
+                [button setButtonType:NSSwitchButton];
                 [view addSubview:button];
                 [subviews addObject:button];
-                int label=[[sent objectAtIndex:2] getNumericValueForVariables:variables];
-                [buttons addObject:[NSDictionary dictionaryWithObjectsAndKeys:button, @"BUTTON",[NSString stringWithFormat:@"%d",label],@"FLAG",nil]];
-                [button setAction:@selector(buttonPushed:)];
+                int lb=[[[sent objectAtIndex:2] objectForKey:@"value"] intValue];
+                [buttons addObject:[NSDictionary dictionaryWithObjectsAndKeys:button, @"BUTTON",[NSString stringWithFormat:@"%d",lb],@"FLAG",nil]];
+                [button setAction:@selector(checkboxPushed:)];
                 [button setTarget:self];
                 //               [button release];
                 point.y+=24;
+                [self checkboxPushed:button];
                 break;
-            }case 0x31:{
-                NSLog(@"[boxf]");
+            }case 0x31:{ // boxf
                 int l=[[sent objectAtIndex:1] getNumericValueForVariables:variables];
                 int t=[[sent objectAtIndex:2] getNumericValueForVariables:variables];
                 int r=[[sent objectAtIndex:3] getNumericValueForVariables:variables];
@@ -452,19 +466,16 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
         }
     }else if(type==TYPE_PRGCMD){
         switch(cmd){
-            case 0x0:
-                NSLog(@"[goto]");
+            case 0x0: // goto
                 [self jumpto:[[sent objectAtIndex:1] getNumericValueForVariables:variables]];
                 omit_flag=YES;
                 [view setNeedsDisplay:YES];
                 break;
-            case 0x7:
-                NSLog(@"[wait]");
+            case 0x7: // wait
                 waitTick=TickCount()+[[sent objectAtIndex:1] getNumericValueForVariables:variables]*60/100;
                 [view setNeedsDisplay:YES];
                 break;
-            case 0x11:
-                NSLog(@"[stop]");
+            case 0x11: // stop
                 code_position=-2;
                 [view setNeedsDisplay:YES];
                 break;
@@ -475,12 +486,10 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
                 break;
         }
     }else if(type==TYPE_CMPCMD){
-        NSLog(@"%ld",cmd);
         unsigned short cmpcmd=cmd%0x10000;
         unsigned short jumpto=cmd/0x10000;
         switch(cmpcmd){
-            case 0x0:
-                NSLog(@"[if]");
+            case 0x0: // if
                 if([[sent objectAtIndex:1] getNumericValueForVariables:variables]==0){
                     [self skipto:jumpto-6];
                     omit_flag=YES;
@@ -615,6 +624,17 @@ unsigned long charToLong(unsigned char* ch,unsigned int head){
     for(dict in buttons){
         if([dict objectForKey:@"BUTTON"] == sender){
             [self jumpto:[[dict objectForKey:@"FLAG"] intValue]];
+        }
+    }
+}
+
+- (void)checkboxPushed:(id)sender{
+    NSDictionary* dict;
+    NSLog(@"CHECKBOX PUSHED");
+    for(dict in buttons){
+        if([dict objectForKey:@"BUTTON"] == sender){
+            [variables setObject:[NSDictionary getDictionaryValue:[NSString stringWithFormat:@"%ld",[sender state]] as:@"NUM"]
+                          forKey:[NSString stringWithFormat:@"%d",[[dict objectForKey:@"FLAG"] intValue]]];
         }
     }
 }

@@ -59,6 +59,7 @@
 - (void)setViewPrepared:(NSView*)value;
 
 - (void)buttonPushed:(id)sender;
+- (void)checkboxPushed:(id)sender;
 - (void)buildCodeViewText;
 - (void)pushTextToCodeView:(NSTextView*)codeViewerView;
 
